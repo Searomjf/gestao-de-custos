@@ -85,7 +85,7 @@ export default function Home() {
     try{
       if(authMode==='signup'){
         if(!authName.trim()) throw new Error('Informe seu nome.');
-        const {data,error}=await supabase.auth.signUp({email:authEmail.trim(),password:authPassword,options:{data:{display_name:authName.trim()},emailRedirectTo:window.location.origin}}); if(error) throw error;
+        const {data,error}=await supabase.auth.signUp({email:authEmail.trim(),password:authPassword,options:{data:{display_name:authName.trim()},emailRedirectTo:new URL('/gestao-de-custos/',window.location.origin).toString()}}); if(error) throw error;
         if(!data.session) setAuthNotice('Conta criada. Abra o e-mail de confirmação e depois volte para entrar.');
       } else {const {error}=await supabase.auth.signInWithPassword({email:authEmail.trim(),password:authPassword}); if(error) throw error;}
     }catch(error){setAuthNotice(error instanceof Error?error.message:'Não foi possível continuar.');}finally{setBusy(false);}
@@ -95,7 +95,7 @@ export default function Home() {
     setBusy(true); setAuthNotice('');
     const {error}=await supabase.auth.signInWithOAuth({
       provider:'google',
-      options:{redirectTo:window.location.origin}
+      options:{redirectTo:new URL('/gestao-de-custos/',window.location.origin).toString()}
     });
     if(error){setAuthNotice(`Não foi possível entrar com Google: ${error.message}`);setBusy(false);}
   }
