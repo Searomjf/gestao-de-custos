@@ -68,7 +68,7 @@ export default function Home() {
       ]);
       const foundError=[profileResult,homeResult,categoryResult,peopleResult,originResult,settingsResult,expenseResult].find(result=>result.error)?.error; if(foundError) throw foundError;
       const cats=(categoryResult.data??[]) as CatalogItem[]; const persons=(peopleResult.data??[]).map(item=>({...item,calculation_percentage:Number(item.calculation_percentage)})) as Person[]; const sources=(originResult.data??[]) as CatalogItem[];
-      setHouseholdId(homeId); setHouseholdName(homeResult.data.name); setDisplayName(profileResult.data?.display_name||preferredName); setCategories(cats); setPeople(persons); setOrigins(sources); setBudget(Number(settingsResult.data.monthly_limit));
+      setHouseholdId(homeId!); setHouseholdName(homeResult.data.name); setDisplayName(profileResult.data?.display_name||preferredName); setCategories(cats); setPeople(persons); setOrigins(sources); setBudget(Number(settingsResult.data.monthly_limit));
       setCategory(current=>current||cats[0]?.id||''); setPerson(current=>current||persons.find(item=>item.name==='Os Dois')?.id||persons[0]?.id||''); setOrigin(current=>current||sources.find(item=>item.name==='PIX')?.id||sources[0]?.id||'');
       type Row=Record<string,unknown>;
       setExpenses(((expenseResult.data??[]) as Row[]).map(row=>{
