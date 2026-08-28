@@ -74,7 +74,7 @@ export default function Home() {
       const foundError=[profileResult,homeResult,categoryResult,peopleResult,originResult,settingsResult,expenseResult].find(result=>result.error)?.error; if(foundError) throw foundError;
       const cats=(categoryResult.data??[]) as Category[]; const persons=(peopleResult.data??[]).map(item=>({...item,calculation_percentage:Number(item.calculation_percentage)})) as Person[]; const sources=(originResult.data??[]) as Source[];
       setHouseholdId(homeId!); setHouseholdName(homeResult.data!.name); setDisplayName(profileResult.data?.display_name||preferredName); setCategories(cats); setPeople(persons); setOrigins(sources); setBudget(Number(settingsResult.data!.monthly_limit));
-      setCategory(current=>current||cats[0]?.id||''); setPerson(current=>current||persons.find(item=>item.name==='Os Dois')?.id||persons[0]?.id||''); setOrigin(current=>current||sources.find(item=>item.name==='PIX')?.id||sources[0]?.id||'');
+      setCategory(current=>cats.some(item=>item.id===current)?current:cats[0]?.id||''); setPerson(current=>persons.some(item=>item.id===current)?current:persons.find(item=>item.name==='Os Dois')?.id||persons[0]?.id||''); setOrigin(current=>sources.some(item=>item.id===current)?current:sources.find(item=>item.name==='PIX')?.id||sources[0]?.id||'');
       type Row=Record<string,unknown>;
       setExpenses(((expenseResult.data??[]) as Row[]).map(row=>{
         const cat=row.category as {name?:string}|null; const per=row.person as {name?:string;calculation_percentage?:number;include_in_calculation?:boolean}|null; const source=row.origin as {name?:string}|null; const series=row.series as {kind?:string}|null;
