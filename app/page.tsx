@@ -27,7 +27,7 @@ const addMonths = (date:string,months:number) => { const value=new Date(`${date}
 const today = () => new Date().toLocaleDateString('en-CA',{timeZone:'America/Sao_Paulo'});
 
 export default function Home() {
-  const [user,setUser]=useState<User|null>(null); const [tourStep,setTourStep]=useState(-1); const [tourBox,setTourBox]=useState<{top:number;left:number;width:number;height:number;cardTop:number;cardLeft:number}|null>(null); const tourUserRef=useRef('');
+  const [user,setUser]=useState<User|null>(null); const workspaceLoadRef=useRef(false); const [tourStep,setTourStep]=useState(-1); const [tourBox,setTourBox]=useState<{top:number;left:number;width:number;height:number;cardTop:number;cardLeft:number}|null>(null); const tourUserRef=useRef('');
   const [authLoading,setAuthLoading]=useState(true);
   const [authMode,setAuthMode]=useState<'login'|'signup'>('login');
   const [authName,setAuthName]=useState(''); const [authEmail,setAuthEmail]=useState(''); const [authPassword,setAuthPassword]=useState(''); const [authNotice,setAuthNotice]=useState('');
@@ -50,6 +50,7 @@ export default function Home() {
   },[]);
 
   const loadWorkspace=useCallback(async(currentUser:User)=>{
+    if(workspaceLoadRef.current)return;workspaceLoadRef.current=true;
     setLoadingData(true); setNotice('');
     try {
       const {data:membership,error:memberError}=await supabase.from('household_members').select('household_id').eq('user_id',currentUser.id).limit(1).maybeSingle();
@@ -98,7 +99,7 @@ export default function Home() {
         return {id:String(row.id),title:String(row.note||cat?.name||'Lançamento'),note:String(row.note||''),category:cat?.name||'Sem categoria',person:per?.name||'Pessoa',origin:source?.name||'Origem',value:Number(row.amount),date:String(row.expense_date),installment:Number(row.occurrence_number),installments:Number(row.occurrence_count),series:series?.kind==='FIXED_RECURRENCE'?'fixed':series?.kind==='INSTALLMENT'?'installment':'single',percentage:Number(per?.calculation_percentage??100),included:per?.include_in_calculation??true,shared:String(row.household_id)!==homeId};
       }));
     } catch(error){setNotice(error instanceof Error?`Não foi possível carregar os dados: ${error.message}`:'Não foi possível carregar os dados.');}
-    finally{setLoadingData(false);}
+    finally{setLoadingData(false);workspaceLoadRef.current=false;}
   },[]);
   useEffect(()=>{if(user) void loadWorkspace(user); else {setExpenses([]);setHouseholdId('');}},[user,loadWorkspace]);
 
