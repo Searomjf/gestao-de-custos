@@ -64,3 +64,8 @@
 
 /* Entrada principal e navegação mais evidentes */
 .nav-item span:first-child{width:28px;font-size:24px}.entry-panel{border-color:#86a0cd;box-shadow:0 12px 35px rgba(26,54,93,.08)}.entry-panel .panel-title h2{font-size:24px}.mobile-nav button span{font-size:24px}.mobile-nav button small{font-size:10px;margin-top:2px}.mobile-nav button.active span{transform:scale(1.14)}@media(max-width:800px){.mobile-nav button span{font-size:23px!important}}@media(max-width:700px){.primary-column{gap:16px}.entry-panel{order:2}.hero-card{order:1}.entry-panel .panel-title h2{font-size:23px}}
+
+
+/* Filtro mensal do resumo */
+.summary-filter{display:flex;align-items:flex-end;gap:10px;padding:13px 15px;border:1px solid #dce9ff;border-radius:16px;background:#eff4ff}.summary-filter>button{display:grid;place-items:center;min-width:46px;height:46px;border:1px solid #86a0cd;border-radius:12px;background:#fff;color:#1a365d;font-size:27px;font-weight:800}.summary-filter>button:hover{background:#d3e4fe}.summary-filter label{flex:1;gap:5px}.summary-filter label span{font-size:10px}.summary-filter input{height:46px;background:#fff;font-size:14px;font-weight:750}.summary-filter .current-month-button{display:block;min-width:auto;padding:0 15px;font-size:11px;white-space:nowrap}
+@media(max-width:600px){.summary-filter{display:grid;grid-template-columns:46px 1fr 46px}.summary-filter .current-month-button{grid-column:1/4;width:100%}}
