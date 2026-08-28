@@ -62,21 +62,8 @@ export default function Home() {
         const {data:home,error:homeError}=await supabase.from('households').insert({name:`Casa de ${preferredName}`,created_by:currentUser.id}).select('id').single(); if(homeError) throw homeError;
         homeId=home.id;
         const {error:joinError}=await supabase.from('household_members').insert({household_id:homeId,user_id:currentUser.id,role:'owner'}); if(joinError) throw joinError;
-        const seeds=await Promise.all([
-          supabase.from('household_settings').insert({household_id:homeId,monthly_limit:8000,alert_percentage:80,cutoff_day:0}),
-          supabase.from('categories').insert([
-            {household_id:homeId,name:'Alimentação',kind:'VARIAVEL',icon:'shopping_cart',color_hex:'#059669'},
-            {household_id:homeId,name:'Transporte',kind:'VARIAVEL',icon:'directions_car',color_hex:'#1A365D'},
-            {household_id:homeId,name:'Saúde',kind:'VARIAVEL',icon:'health',color_hex:'#DC6B5D'},
-            {household_id:homeId,name:'Moradia',kind:'FIXO',icon:'home',color_hex:'#8250DF'},
-            {household_id:homeId,name:'Assinatura',kind:'FIXO',icon:'subscriptions',color_hex:'#D97706'}]),
-          supabase.from('financial_people').insert([
-            {household_id:homeId,name:'Eu',calculation_percentage:100,include_in_calculation:true,is_default:true},
-            {household_id:homeId,name:'Andressa',calculation_percentage:100,include_in_calculation:true,is_default:false},
-            {household_id:homeId,name:'Os Dois',calculation_percentage:50,include_in_calculation:true,is_default:false}]),
-          supabase.from('expense_sources').insert(['PIX','Cartão','Boleto','Dívida'].map(name=>({household_id:homeId,name})))
-        ]);
-        const failed=seeds.find(result=>result.error); if(failed?.error) throw failed.error;
+        const {error:settingsError}=await supabase.from('household_settings').insert({household_id:homeId,monthly_limit:8000,alert_percentage:80,cutoff_day:0});
+        if(settingsError) throw settingsError;
       }
       const [profileResult,homeResult,categoryResult,peopleResult,originResult,settingsResult,expenseResult,personLinkResult]=await Promise.all([
         supabase.from('profiles').select('display_name').eq('user_id',currentUser.id).maybeSingle(),
