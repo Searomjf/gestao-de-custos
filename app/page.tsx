@@ -69,22 +69,24 @@ export default function Home() {
         ]);
         const failed=seeds.find(result=>result.error); if(failed?.error) throw failed.error;
       }
-      const [profileResult,homeResult,categoryResult,peopleResult,originResult,settingsResult,expenseResult]=await Promise.all([
+      const [profileResult,homeResult,categoryResult,peopleResult,originResult,settingsResult,expenseResult,personLinkResult]=await Promise.all([
         supabase.from('profiles').select('display_name').eq('user_id',currentUser.id).maybeSingle(),
         supabase.from('households').select('name').eq('id',homeId).single(),
         supabase.from('categories').select('id,name,kind,icon,color_hex').eq('household_id',homeId).order('name'),
         supabase.from('financial_people').select('id,name,calculation_percentage,include_in_calculation').eq('household_id',homeId).order('name'),
         supabase.from('expense_sources').select('id,name,due_day,closing_day,expiration_text,card_last_four').eq('household_id',homeId).order('name'),
         supabase.from('household_settings').select('monthly_limit').eq('household_id',homeId).single(),
-        supabase.from('expenses').select('id,household_id,amount,expense_date,occurrence_number,occurrence_count,note,category:categories(name),person:financial_people(name,calculation_percentage,include_in_calculation),origin:expense_sources(name),series:expense_series(kind)').order('expense_date',{ascending:false})
+        supabase.from('expenses').select('id,household_id,financial_person_id,amount,expense_date,occurrence_number,occurrence_count,note,category:categories(name),person:financial_people(name,calculation_percentage,include_in_calculation),origin:expense_sources(name),series:expense_series(kind)').order('expense_date',{ascending:false}),
+        supabase.from('person_links').select('inviter_user_id,inviter_person_id,accepter_user_id,accepter_person_id')
       ]);
-      const foundError=[profileResult,homeResult,categoryResult,peopleResult,originResult,settingsResult,expenseResult].find(result=>result.error)?.error; if(foundError) throw foundError;
+      const foundError=[profileResult,homeResult,categoryResult,peopleResult,originResult,settingsResult,expenseResult,personLinkResult].find(result=>result.error)?.error; if(foundError) throw foundError;
       const cats=(categoryResult.data??[]) as Category[]; const persons=(peopleResult.data??[]).map(item=>({...item,calculation_percentage:Number(item.calculation_percentage)})) as Person[]; const sources=(originResult.data??[]) as Source[];
       setHouseholdId(homeId!); setHouseholdName(homeResult.data!.name); setDisplayName(profileResult.data?.display_name||preferredName); setCategories(cats); setPeople(persons); setOrigins(sources); setBudget(Number(settingsResult.data!.monthly_limit));
       setCategory(current=>cats.some(item=>item.id===current)?current:cats[0]?.id||''); setPerson(current=>persons.some(item=>item.id===current)?current:persons.find(item=>item.name==='Os Dois')?.id||persons[0]?.id||''); setShareTargetPerson(current=>persons.some(item=>item.id===current)?current:persons.find(item=>item.name==='Os Dois')?.id||persons[0]?.id||''); setOrigin(current=>sources.some(item=>item.id===current)?current:sources.find(item=>item.name==='PIX')?.id||sources[0]?.id||'');
-      type Row=Record<string,unknown>;
+      type Row=Record<string,unknown>; const localPersonByRemoteId=new Map<string,Person>();
+      for(const link of (personLinkResult.data??[]) as Row[]){const ownSide=String(link.inviter_user_id)===currentUser.id;const localId=String(ownSide?link.inviter_person_id:link.accepter_person_id);const remoteId=String(ownSide?link.accepter_person_id:link.inviter_person_id);const localPerson=persons.find(item=>item.id===localId);if(localPerson)localPersonByRemoteId.set(remoteId,localPerson);}
       setExpenses(((expenseResult.data??[]) as Row[]).map(row=>{
-        const cat=row.category as {name?:string}|null; const per=row.person as {name?:string;calculation_percentage?:number;include_in_calculation?:boolean}|null; const source=row.origin as {name?:string}|null; const series=row.series as {kind?:string}|null;
+        const cat=row.category as {name?:string}|null; const remotePer=row.person as {name?:string;calculation_percentage?:number;include_in_calculation?:boolean}|null; const localPer=localPersonByRemoteId.get(String(row.financial_person_id)); const per=localPer??remotePer; const source=row.origin as {name?:string}|null; const series=row.series as {kind?:string}|null;
         return {id:String(row.id),title:String(row.note||cat?.name||'Lançamento'),note:String(row.note||''),category:cat?.name||'Sem categoria',person:per?.name||'Pessoa',origin:source?.name||'Origem',value:Number(row.amount),date:String(row.expense_date),installment:Number(row.occurrence_number),installments:Number(row.occurrence_count),series:series?.kind==='FIXED_RECURRENCE'?'fixed':series?.kind==='INSTALLMENT'?'installment':'single',percentage:Number(per?.calculation_percentage??100),included:per?.include_in_calculation??true,shared:String(row.household_id)!==homeId};
       }));
     } catch(error){setNotice(error instanceof Error?`Não foi possível carregar os dados: ${error.message}`:'Não foi possível carregar os dados.');}
