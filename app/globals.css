@@ -78,3 +78,19 @@
 
 /* Campo percentual compatível com Safari/iPhone */
 .percentage-input{position:relative;width:100%;min-height:48px}.percentage-input input{min-height:48px;padding-right:42px;font-size:16px;-webkit-appearance:none;appearance:none}.percentage-input b{position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#1a365d;font-size:14px;pointer-events:none}
+
+
+/* Busca e cards de lançamentos inspirados no aplicativo original */
+.expense-search{display:flex;align-items:center;gap:10px;margin:16px 0 8px;padding:0 14px;border:1px solid #b9c7dc;border-radius:14px;background:#fff;color:#1a365d}
+.expense-search>span{font-size:25px;line-height:1}
+.expense-search input{min-width:0;flex:1;padding:14px 0;border:0;outline:0;background:transparent;color:#172033;font:inherit}
+.expense-search button{display:grid;place-items:center;width:28px;height:28px;border:0;border-radius:50%;background:#e8edf7;color:#1a365d;font-size:18px}
+.installment-list .installment-row{grid-template-columns:52px minmax(0,1fr) auto 20px;padding:15px 10px}
+.expense-category-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:50%;font-size:20px}
+.installment-copy strong{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:14px}
+.installment-copy small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px}
+.installment-amount{display:flex;align-items:flex-end;flex-direction:column;gap:4px;white-space:nowrap}
+.installment-amount b{color:#1a365d;font-size:14px}
+.installment-amount small{color:#64748b;font-size:9px}
+.installment-row .edit-hint{font-size:22px}
+@media(max-width:700px){.installment-list .installment-row{grid-template-columns:48px minmax(0,1fr) auto 14px;gap:10px}.expense-category-icon{width:44px;height:44px}.installment-amount b{font-size:13px}.installment-copy strong{font-size:13px}.installment-copy small{max-width:100%;font-size:9px}.installment-row .edit-hint{grid-column:4;grid-row:1;text-align:right}}
