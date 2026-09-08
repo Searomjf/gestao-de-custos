@@ -106,3 +106,15 @@
 .donut-legend>button small{grid-column:2/4;color:#64748b;font-size:8px}
 .summary-filter-chip{display:flex;align-items:center;gap:8px;width:max-content;max-width:100%;margin-top:9px;padding:7px 10px;border:1px solid #74e8b7;border-radius:999px;background:#e9fff6;color:#075c43;font-size:10px;font-weight:800}
 .summary-filter-chip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+
+/* Orçamento mensal nos cadastros */
+.budget-settings{display:grid;grid-template-columns:minmax(220px,1fr) minmax(210px,300px) auto;gap:18px;align-items:end;margin-bottom:18px}
+.budget-settings h2{margin:4px 0 5px}
+.budget-settings>div>small{color:#64748b}
+.budget-settings label{display:flex;flex-direction:column;gap:7px;color:#334155;font-size:10px;font-weight:750}
+.budget-settings label>div{display:flex;align-items:center;gap:8px;padding:0 13px;border:1px solid #b9c7dc;border-radius:12px;background:#fff}
+.budget-settings label b{color:#1a365d}
+.budget-settings input{min-width:0;width:100%;padding:13px 0;border:0;outline:0;background:transparent;color:#172033;font:inherit;font-size:14px}
+.budget-settings>.form-notice{grid-column:1/-1;margin:0}
+@media(max-width:760px){.budget-settings{grid-template-columns:1fr}.budget-settings .save{width:100%}}
