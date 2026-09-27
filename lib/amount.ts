@@ -20,3 +20,8 @@ export function parseAmount(raw: string): number {
   return Number.isFinite(result) && result <= Number.MAX_SAFE_INTEGER / 100 ? Math.round((result + Number.EPSILON) * 100) / 100 : NaN;
 }
 
+
+export function formatAmountInput(raw: string): string {
+  const value = parseAmount(raw);
+  return Number.isFinite(value) ? value.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : raw;
+}
